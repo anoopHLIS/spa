@@ -222,6 +222,7 @@ function payTicket(barcode, paymentMethodCode) {
  * @returns {string}
  */
 function getTicketState(barcode) {
+    if(barcode.length === 16){
     var paidTicket = paidTickets[barcode];
     if (paidTicket) {
         var paidTicketJson = JSON.parse(paidTicket);
@@ -231,13 +232,22 @@ function getTicketState(barcode) {
 
         var diffInMinutes = (currentTime - paidTime) / 6e4;
 
-        if (diffInMinutes > 15)
+        if (diffInMinutes > 15){
+            document.getElementById('ticketPaymentStatus').innerHTML = 'Unpaid';
             return "unpaid";
+        }else{
+            document.getElementById('ticketPaymentStatus').innerHTML = 'Paid';
         return "paid";
-
+        }
 
     }
+    document.getElementById('ticketPaymentStatus').innerHTML = 'Unpaid';
     return "unpaid";
+}
+else{
+    document.getElementById('ticketPaymentStatus').innerHTML = 'N/A';
+    return "N/A";
+}
 }
 
 /**
