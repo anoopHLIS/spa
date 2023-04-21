@@ -7,6 +7,9 @@ var timePerHr = 30;
 var extendTimePerHr = 3;
 var minimumTime = 3;
 
+var paymentMethod = ["Credit Card", "Debit Card", "Cash"];
+var paidTickets = new Map();
+
 /**
  * Function to load initials on refresh page
  */
@@ -15,6 +18,12 @@ function loadInitial() {
     localStorage.setItem("tickets", JSON.stringify(tickets));
   } else {
     tickets = JSON.parse(localStorage.getItem("tickets"));
+  }
+
+  if (!localStorage.getItem("paidTickets")) {
+    localStorage.setItem("paidTickets", JSON.stringify(paidTickets));
+  } else {
+    paidTickets = JSON.parse(localStorage.getItem("paidTickets"));
   }
 
   if (!localStorage.getItem("barcodes")) {
@@ -89,6 +98,20 @@ function generateTicketBarcode(length) {
  * @param barcode
  */
 function calculatePrice(barcode) {
+  var paidTicket = paidTickets[barcode];
+
+  if (paidTicket) {
+    var paidTicketJson = JSON.parse(paidTicket);
+    return (
+      "Price: 0 ;" +
+      "Amount Paid: " +
+      paidTicketJson.amount +
+      " ; Payment Method: " +
+      paymentMethod[paidTicketJson.paymentMethod] +
+      " ; Paid at: " +
+      new Date(paidTicketJson.paidAt)
+    );
+  }
   var ticket = tickets[barcode];
   var current = new Date();
   var ticketTime = new Date(JSON.parse(ticket).date);
@@ -107,5 +130,30 @@ function calculatePrice(barcode) {
     // calculating price based on remaining hrs * minimumTime
     price = price + Math.floor(timeDiff) * extendTimePerHr;
     return price;
+  }
+}
+
+function payTicket(barcode, paymentMethodCode) {
+  // check if already paid or not
+  var paidTicket = paidTickets[barcode];
+
+  if (paidTicket) {
+    var paidTicketJson = JSON.parse(paidTicket);
+    return (
+      "Price: 0 ;" +
+      "Amount Paid: " +
+      paidTicketJson.amount +
+      " ; Payment Method: " +
+      paymentMethod[paidTicketJson.paymentMethod] +
+      " ; Paid at: " +
+      new Date(paidTicketJson.paidAt)
+    );
+  } else {
+    paidTickets[barcode] = JSON.stringify({
+      amount: calculatePrice(barcode),
+      paymentMethod: paymentMethodCode,
+      paidAt: new Date(),
+    });
+    localStorage.setItem("paidTickets", JSON.stringify(paidTickets));
   }
 }
