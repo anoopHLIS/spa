@@ -2,7 +2,7 @@ var tickets = new Map();
 var ticketLimit = 60;
 var barcodes = [];
 var ticketCurrentCount = 0;
-
+var isGenerated = false;
 var timePerHr = 30;
 var extendTimePerHr = 3;
 var minimumTime = 3;
@@ -27,9 +27,10 @@ function loadInitial() {
     }
 
     if (!localStorage.getItem("barcodes")) {
-        localStorage.setItem("barcodes", barcodes);
+        localStorage.setItem("barcodes", JSON.stringify(barcodes));
     } else {
-        barcodes = localStorage.getItem("barcodes");
+        barcodes = JSON.parse(localStorage.getItem("barcodes"));
+        document.getElementById("tickets").innerHTML = barcodes;
     }
 
     if (!localStorage.getItem("ticketLimit")) {
@@ -42,6 +43,7 @@ function loadInitial() {
         localStorage.setItem("ticketCurrentCount", ticketCurrentCount);
     } else {
         ticketCurrentCount = localStorage.getItem("ticketCurrentCount");
+        document.getElementById("ticketCount").innerHTML = ticketCurrentCount;
     }
 }
 
@@ -63,11 +65,14 @@ function getTicket() {
         barcode: barcodeForTicket,
         date: new Date(),
     });
-    barcodes[ticketCurrentCount] = barcodeForTicket;
+    barcodes.push(barcodeForTicket);
     ticketCurrentCount++;
     localStorage.setItem("tickets", JSON.stringify(tickets));
     localStorage.setItem("ticketCurrentCount", ticketCurrentCount);
-    localStorage.setItem("barcodes", barcodes);
+    localStorage.setItem("barcodes", JSON.stringify(barcodes));
+    document.getElementById("tickets").innerHTML = barcodes;
+    document.getElementById("ticketCount").innerHTML = ticketCurrentCount;
+    document.getElementById("generateTicketBtn").style.display = 'none';
 }
 
 /**
@@ -102,6 +107,7 @@ function generateTicketBarcode(length) {
  * @param barcode
  */
 function calculatePrice(barcode) {
+    if(barcode.length === 16){
     var paidTicket = paidTickets[barcode];
 
     if (paidTicket) {
@@ -121,11 +127,11 @@ function calculatePrice(barcode) {
             } else {
                 extraPrice = extendTimePerHr * diffInHr;
             }
-
-            return extraPrice;
+            document.getElementById("calculatePriceResult").innerHTML = extraPrice;
+            return {price:extraPrice};
         }
 
-
+        document.getElementById("calculatePriceResult").innerHTML = 0;
         return {...paidTicketJson,price:0};
     }
     var ticket = tickets[barcode];
@@ -135,7 +141,8 @@ function calculatePrice(barcode) {
         Math.abs(current.getTime() - ticketTime.getTime()) / 36e5;
 
     if (timeDifferenceInHrs < minimumTime || timeDifferenceInHrs === minimumTime) {
-        return timePerHr;
+        document.getElementById("calculatePriceResult").innerHTML = timePerHr;
+        return {price:timePerHr};
     } else {
         var timeDiff = timeDifferenceInHrs;
         // setting timePerHr
@@ -145,8 +152,13 @@ function calculatePrice(barcode) {
 
         // calculating price based on remaining hrs * minimumTime
         price = price + Math.floor(timeDiff) * extendTimePerHr;
-        return price;
+        document.getElementById("calculatePriceResult").innerHTML = price;
+        return {price: price};
     }
+}else{
+    document.getElementById("calculatePriceResult").innerHTML = 'N/A';
+    return {price: 0};
+}
 }
 
 /**
