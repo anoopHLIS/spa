@@ -27,7 +27,7 @@ function loadInitial() {
     }
 
     if (!localStorage.getItem("barcodes")) {
-        localStorage.setItem("bardodes", barcodes);
+        localStorage.setItem("barcodes", barcodes);
     } else {
         barcodes = localStorage.getItem("barcodes");
     }
@@ -46,12 +46,15 @@ function loadInitial() {
 }
 
 /**
- *
+ * Task 1
+ * Function that
+ calculates and returns a new barcode (16 digits).
+ Save the ticket and time when the ticket is given out for later reference.
  * @returns new ticket
  */
 function getTicket() {
     if (ticketCurrentCount === ticketLimit) {
-        alert("No space available for new consumer");
+        alert("No space available for new people");
         return false;
     }
     var barcodeForTicket = generateTicketBarcode(16);
@@ -94,6 +97,7 @@ function generateTicketBarcode(length) {
 }
 
 /**
+ * Task 2
  * Function to calculate price of barcode
  * @param barcode
  */
@@ -122,7 +126,7 @@ function calculatePrice(barcode) {
         }
 
 
-        return paidTicketJson;
+        return {...paidTicketJson,price:0};
     }
     var ticket = tickets[barcode];
     var current = new Date();
@@ -145,6 +149,14 @@ function calculatePrice(barcode) {
     }
 }
 
+/**
+ * Task 3
+ * Function that marks the ticket as paid and saves the time and
+ payment option used.
+ * @param barcode
+ * @param paymentMethodCode
+ * @returns {any}
+ */
 function payTicket(barcode, paymentMethodCode) {
     // check if already paid or not
     var paidTicket = paidTickets[barcode];
@@ -167,7 +179,7 @@ function payTicket(barcode, paymentMethodCode) {
                 extraPrice = extendTimePerHr * diffInHr;
             }
             paidTickets[barcode] = JSON.stringify({
-                amount: calculatePrice(barcode),
+                amount: paidTicketJson.amount,
                 paymentMethod: paymentMethodCode,
                 paidAt: new Date(),
                 extraAmount: extraPrice,
@@ -177,7 +189,7 @@ function payTicket(barcode, paymentMethodCode) {
         } else {
 
             // if already paid and ready for exit
-            return paidTicketJson;
+            return {...paidTicketJson, status: 'already paid'};
         }
     } else {
         paidTickets[barcode] = JSON.stringify({
@@ -191,6 +203,12 @@ function payTicket(barcode, paymentMethodCode) {
     }
 }
 
+/**
+ * Task 4
+ *  Function that returns the state (paid or unpaid) of the ticket.
+ * @param barcode
+ * @returns {string}
+ */
 function getTicketState(barcode) {
     var paidTicket = paidTickets[barcode];
     if (paidTicket) {
@@ -208,4 +226,15 @@ function getTicketState(barcode) {
 
     }
     return "unpaid";
+}
+
+/**
+ * Task 5
+ * Function that calculates the currently available spaces. Make
+ sure that there can't be more people in the Spa than available spaces.
+ */
+function getFreeSpaces() {
+
+    return ticketLimit - ticketCurrentCount;
+
 }
