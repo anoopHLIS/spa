@@ -72,7 +72,7 @@ function getTicket() {
     localStorage.setItem("barcodes", JSON.stringify(barcodes));
     document.getElementById("tickets").innerHTML = barcodes;
     document.getElementById("ticketCount").innerHTML = ticketCurrentCount;
-    document.getElementById("generateTicketBtn").style.display = 'none';
+    // document.getElementById("generateTicketBtn").style.display = 'none';
 }
 
 /**
@@ -246,7 +246,7 @@ function getTicketState(barcode) {
  sure that there can't be more people in the Spa than available spaces.
  */
 function getFreeSpaces() {
-
+    document.getElementById("freeSpaceCount").innerHTML = (ticketLimit - ticketCurrentCount);
     return ticketLimit - ticketCurrentCount;
 
 }
