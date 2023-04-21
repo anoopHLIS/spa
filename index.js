@@ -170,6 +170,7 @@ function calculatePrice(barcode) {
  * @returns {any}
  */
 function payTicket(barcode, paymentMethodCode) {
+    if(barcode.length === 16){
     // check if already paid or not
     var paidTicket = paidTickets[barcode];
 
@@ -198,8 +199,15 @@ function payTicket(barcode, paymentMethodCode) {
                 ticketPaidAt: new Date(paidTicketJson.paidAt)
             });
             localStorage.setItem("paidTickets", JSON.stringify(paidTickets));
+            document.getElementById('successInPayment').innerHTML = 'Paid successfully!';
+            setTimeout(()=>{
+                document.getElementById('successInPayment').innerHTML = '';
+            },3000);
         } else {
-
+            document.getElementById('errorInPayment').innerHTML = 'Already Paid!';
+            setTimeout(()=>{
+                document.getElementById('errorInPayment').innerHTML = '';
+            },3000);
             // if already paid and ready for exit
             return {...paidTicketJson, status: 'already paid'};
         }
@@ -212,7 +220,13 @@ function payTicket(barcode, paymentMethodCode) {
         // ticketCurrentCount--; // to be uncomment when need to exit
         // localStorage.setItem('ticketCurrentCount', ticketCurrentCount);
         localStorage.setItem("paidTickets", JSON.stringify(paidTickets));
+        localStorage.setItem("paidTickets", JSON.stringify(paidTickets));
+            document.getElementById('successInPayment').innerHTML = 'Paid successfully!';
+            setTimeout(()=>{
+                document.getElementById('successInPayment').innerHTML = '';
+            },3000);
     }
+}
 }
 
 /**

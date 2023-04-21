@@ -21,28 +21,40 @@
     <div class="row col-12">
       <br />
       <br />
-      <div class="col-md-4 mydiv">
+      <div class="col-md-4 mb-2 mydiv">
         <h4>Enter barcode:</h4>
         <input type="text" class="form-control" id="barcodePriceChkInput" /><br />
         <button class="btn btn-success mr-5" id="calculatePriceBtn"
           onclick="calculatePrice(document.getElementById('barcodePriceChkInput').value)">Calculate Price</button>
         <label>Price:</label> <span id="calculatePriceResult"></span>
       </div>
-      <br />
-      <br />
-      <div class="col-md-4 mydiv">
-        <button class="btn btn-primary mb-2" onclick="getFreeSpaces()">Check Ticket Availablility</button>
+      <div class="col-md-4 mb-2 mydiv">
+        <button class="btn btn-primary mb-2 mt-2" onclick="getFreeSpaces()">Check Ticket Availablility</button>
         <br />
         No of tickets available: <span id="freeSpaceCount"></span>
       </div>
-      <br />
-      <br />
-      <div class="col-md-4 mydiv">
+      <div class="col-md-4 mb-2 mydiv">
+        <h4>Enter barcode:</h4>
         <input type="text" class="form-control" id="barcodeStateChkInput" /><br />
         <button class="btn btn-primary mb-2"
           onclick="getTicketState(document.getElementById('barcodeStateChkInput').value)">Check Payment</button>
         <br />
         Ticket Payment status: <span id="ticketPaymentStatus"></span>
+      </div>
+      <div class="col-md-4 mb-2 mydiv">
+        <b class="text-danger" id="errorInPayment"></b>
+        <b class="text-success" id="successInPayment"></b>
+        <h4>Select Payment Method:</h4>
+        <select id="paymentMethodSelectInput" class="form-control">
+          <option value="0">Credit Card</option>
+          <option value="1">Debit Card</option>
+          <option value="2">Cash</option>
+        </select>
+        <br/>
+        <h4>Enter barcode:</h4>
+        <input type="text" class="form-control" id="barcodePaymentInput" />
+        <br/>
+        <button class="btn btn-success mb-2" onclick="payTicket(document.getElementById('barcodePaymentInput').value, document.getElementById('paymentMethodSelectInput').value)">Pay</button>
       </div>
     </div>
   </div>
